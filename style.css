@@ -1,0 +1,31 @@
+h1 {
+    text-align: center;
+    padding: 10px;
+    margin: 10px 10px 0 10px;
+}
+
+#options-container {
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#options-container button, label, select {
+    margin: 10px;
+    text-align: center;
+    display: inline-block;
+}
+
+#main-container {
+    border: solid 1px black;
+    margin: 10px auto;
+}
+
+.grid-square {
+    background-color: white;
+    float: left;
+}
+
+.clear-left {
+    clear: left;
+}
