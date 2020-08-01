@@ -1,21 +1,18 @@
-let ROWS = COLUMNS = 7;
+let ROWS = COLS = 7;
 let MAIN_CONTAINER_DIMENSIONS = 500; // width and height of main container box, in px
 
+let tiles = null; // array of Tile objects
 const container = document.querySelector("#main-container");
-setContainerDimensions(container);
+const newSketchButton = document.querySelector('#new-sketch-button');
+const sketchModeCheckbox = document.getElementById('sketch-mode-checkbox');
+const coloringStyleSelection = document.getElementById('coloring-style-selection');
 
-newSketchButton = document.querySelector('#new-sketch-button');
-newSketchButton.addEventListener('click', onNewSketchButtonClick);
-
-sketchModeCheckbox = document.getElementById('sketch-mode-checkbox');
-
-coloringStyleSelection = document.getElementById('coloring-style-selection');
-
-generateGrid();
-
-function setContainerDimensions(container) {
-    container.style.width = container.style.height = MAIN_CONTAINER_DIMENSIONS.toString() + "px";
-}
+$( document ).ready(function() {
+	setContainerDimensions(container);
+	newSketchButton.addEventListener('click', onNewSketchButtonClick);
+	fillTilesArray();
+	generateGrid();
+});
 
 function generateGrid() {
 
@@ -23,7 +20,7 @@ function generateGrid() {
     const tileDimensions = MAIN_CONTAINER_DIMENSIONS / ROWS;
 
     for (let r = 1; r <= ROWS; ++r) {
-        for (let c = 1; c <= COLUMNS; ++c) {
+        for (let c = 1; c <= COLS; ++c) {
     
             let tile = document.createElement("div");
 
@@ -39,52 +36,14 @@ function generateGrid() {
             tile.addEventListener('mouseover', changeColor);
     
             container.appendChild(tile);
+			
+			// then fill tiles with the tile
+			
+			// <code>
         }
     }
 }
 
-/*
-function getRandomColor() {
-    const r = Math.floor(Math.random() * 256);
-    const g = Math.floor(Math.random() * 256);
-    const b = Math.floor(Math.random() * 256);
-
-    return `rgb(${r}, ${g}, ${b})`;
-}
-*/
-
-function getNormalColor() {
-    return 'rgb(73, 67, 183)';
-}
-
-function getGrassColor() {
-	return 'rgb(41, 166, 60)';
-}
-
-function getWaterColor() {
-	return 'rgb(22, 81, 219)';
-}
-
-function getMarshColor() {
-	return 'rgb(63, 105, 12)';
-}
-
-function getPlasmaColor() {
-	return 'rgb(197, 211, 212)';
-}
-
-/*
-function darkenSquare(target) {
-    console.log(target.style.opacity);
-
-    let opacity = +target.style.opacity;
-    opacity += 0.1;
-    if (opacity > 1) opacity = 1;
-    target.style.opacity = opacity;
-    
-    console.log(target.style.opacity);
-}
-*/
 
 function changeColor(e) {
     if (!sketchModeCheckbox.checked && coloringStyleSelection.value === "grass") {
@@ -130,11 +89,41 @@ function deleteGrid() {
 }
 
 function onNewSketchButtonClick() {
-    ROWS = COLUMNS = getUserInputForDimensions();
+    ROWS = COLS = getUserInputForDimensions();
     deleteGrid();
     generateGrid();
 }
 
-function getTile(r, c) {
-	
+// Tiles is an array of Tile objects
+function fillTilesArray() {
+	tiles = new Array(ROWS);
+	for (var r = 0; r < tiles.length; r++) {
+	  tiles[r] = new Array(COLS);
+	}
+}
+
+function setContainerDimensions(container) {
+    container.style.width
+		= container.style.height 
+		= MAIN_CONTAINER_DIMENSIONS.toString() + "px";
+}
+
+function getNormalColor() {
+    return 'rgb(73, 67, 183)';
+}
+
+function getGrassColor() {
+	return 'rgb(41, 166, 60)';
+}
+
+function getWaterColor() {
+	return 'rgb(22, 81, 219)';
+}
+
+function getMarshColor() {
+	return 'rgb(63, 105, 12)';
+}
+
+function getPlasmaColor() {
+	return 'rgb(197, 211, 212)';
 }
