@@ -1,4 +1,5 @@
 const tileTypes = {
+	EMPTY: 'empty',
     GRASS: 'grass',
     WATER: 'water',
     MARSH: 'marsh',
