@@ -12,6 +12,8 @@ $( document ).ready(function() {
 	newSketchButton.addEventListener('click', onNewSketchButtonClick);
 	fillTilesArray();
 	generateGrid();
+	
+	// tile = new Tile(tileTypes.GRASS);
 });
 
 function generateGrid() {
