@@ -7,16 +7,35 @@ const newSketchButton = document.querySelector('#new-sketch-button');
 const sketchModeCheckbox = document.getElementById('sketch-mode-checkbox');
 const coloringStyleSelection = document.getElementById('coloring-style-selection');
 const downloadJSONButton = document.getElementById('download-json-button');
-let mouseDown = false;
+let toggle = false;
+let currentTileDiv = null;
 
 $( document ).ready(function() {
 	setContainerDimensions(container);
 	newSketchButton.addEventListener('click', onNewSketchButtonClick);
 	downloadJSONButton.addEventListener('click', downloadJSON);
 	
-	// for mouseDown
-	document.addEventListener('mousedown', setMouseDownTrue);
-	document.addEventListener('mouseup', setMouseDownFalse);
+	// for toggle
+	document.addEventListener('mousedown', function(event) {
+		setToggleTrue();
+		
+		if (currentTileDiv !== null) {
+			changeColor(currentTileDiv);
+		}
+	});
+	document.addEventListener('mouseup', setToggleFalse);
+	
+	// for shortcut toggling 
+	document.addEventListener('keydown', function(event) {
+		const key = event.key; // "a", "1", "Shift", etc.
+		if (key === "1"){
+			setToggle(!toggle);
+			
+			if (currentTileDiv !== null) {
+				changeColor(currentTileDiv);
+			}
+		}
+	});
 	
 	fillTilesArray();
 	generateGrid();
@@ -41,7 +60,8 @@ function generateGrid() {
             }
     
             tile.classList.add('grid-square');
-            tile.addEventListener('mouseover', changeColor);
+			
+            tile.addEventListener('mouseover', onTileMouseOver);
     
 			tile.setAttribute('row', r);
 			tile.setAttribute('col', c);
@@ -55,42 +75,47 @@ function generateGrid() {
     }
 }
 
-
-function changeColor(e) {
-	
-	// console.log("r:" + e.target.getAttribute("row") + " || c:" + e.target.getAttribute("col"));
-	
-	if (!mouseDown)
-		return;
-	
-	const row = e.target.getAttribute("row");
-	const col = e.target.getAttribute("col");
+function changeColor(tileDiv) {
+	const row = tileDiv.getAttribute("row");
+	const col = tileDiv.getAttribute("col");
 	const tile = tiles[row][col];
 	
     if (coloringStyleSelection.value === "grass") {
-        e.target.style.backgroundColor = getGrassColor();
-        e.target.style.opacity = "";
+        tileDiv.style.backgroundColor = getGrassColor();
+        tileDiv.style.opacity = "";
 		
 		tile.tileType = tileTypes.GRASS;
     }
     else if (coloringStyleSelection.value === "water") {
-        e.target.style.backgroundColor = getWaterColor();
-        e.target.style.opacity = "";
+        tileDiv.style.backgroundColor = getWaterColor();
+        tileDiv.style.opacity = "";
 		
 		tile.tileType = tileTypes.WATER;
     }
     else if (coloringStyleSelection.value === "marsh") {
-        e.target.style.backgroundColor = getMarshColor();
-		e.target.style.opacity = "";
+        tileDiv.style.backgroundColor = getMarshColor();
+		tileDiv.style.opacity = "";
 		
 		tile.tileType = tileTypes.MARSH;
     }
 	else if (coloringStyleSelection.value === "plasma") {
-        e.target.style.backgroundColor = getPlasmaColor();
-		e.target.style.opacity = "";
+        tileDiv.style.backgroundColor = getPlasmaColor();
+		tileDiv.style.opacity = "";
 		
 		tile.tileType = tileTypes.PLASMA;
     }
+}
+
+
+function onTileMouseOver(e) {
+	// console.log("r:" + e.target.getAttribute("row") + " || c:" + e.target.getAttribute("col"));
+	
+	currentTileDiv = e.target;
+	
+	if (!toggle)
+		return;
+	
+	changeColor(e.target);
 }
 
 function getUserInputForDimensions() {
@@ -110,16 +135,12 @@ function getUserInputForDimensions() {
     }
 }
 
-// taken from
-// https://stackoverflow.com/questions/48593312/javascript-event-when-mouseover-and-mousedown
-function setMouseDownTrue() {
-  console.log('setMouseDownTrue');
-  mouseDown = true;
-}
+function setToggleTrue() { setToggle(true); }
+function setToggleFalse() { setToggle(false); }
 
-function setMouseDownFalse() {
-  console.log('setMouseDownFalse');
-  mouseDown = false;
+function setToggle(value) {
+  console.log(`setToggle(${value})`);
+  toggle = value;
 }
 
 function deleteGrid() {
