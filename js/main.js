@@ -7,16 +7,19 @@ const newSketchButton = document.querySelector('#new-sketch-button');
 const sketchModeCheckbox = document.getElementById('sketch-mode-checkbox');
 const coloringStyleSelection = document.getElementById('coloring-style-selection');
 const downloadJSONButton = document.getElementById('download-json-button');
+let mouseDown = false;
 
 $( document ).ready(function() {
 	setContainerDimensions(container);
 	newSketchButton.addEventListener('click', onNewSketchButtonClick);
 	downloadJSONButton.addEventListener('click', downloadJSON);
+	
+	// for mouseDown
+	document.addEventListener('mousedown', setMouseDownTrue);
+	document.addEventListener('mouseup', setMouseDownFalse);
+	
 	fillTilesArray();
 	generateGrid();
-	// setDownloadLinkHref();
-	
-	// tile = new Tile(tileTypes.GRASS);
 });
 
 function generateGrid() {
@@ -57,29 +60,32 @@ function changeColor(e) {
 	
 	// console.log("r:" + e.target.getAttribute("row") + " || c:" + e.target.getAttribute("col"));
 	
+	if (!mouseDown)
+		return;
+	
 	const row = e.target.getAttribute("row");
 	const col = e.target.getAttribute("col");
 	const tile = tiles[row][col];
 	
-    if (!sketchModeCheckbox.checked && coloringStyleSelection.value === "grass") {
+    if (coloringStyleSelection.value === "grass") {
         e.target.style.backgroundColor = getGrassColor();
         e.target.style.opacity = "";
 		
 		tile.tileType = tileTypes.GRASS;
     }
-    else if (!sketchModeCheckbox.checked && coloringStyleSelection.value === "water") {
+    else if (coloringStyleSelection.value === "water") {
         e.target.style.backgroundColor = getWaterColor();
         e.target.style.opacity = "";
 		
 		tile.tileType = tileTypes.WATER;
     }
-    else if (!sketchModeCheckbox.checked && coloringStyleSelection.value === "marsh") {
+    else if (coloringStyleSelection.value === "marsh") {
         e.target.style.backgroundColor = getMarshColor();
 		e.target.style.opacity = "";
 		
 		tile.tileType = tileTypes.MARSH;
     }
-	else if (!sketchModeCheckbox.checked && coloringStyleSelection.value === "plasma") {
+	else if (coloringStyleSelection.value === "plasma") {
         e.target.style.backgroundColor = getPlasmaColor();
 		e.target.style.opacity = "";
 		
@@ -104,21 +110,36 @@ function getUserInputForDimensions() {
     }
 }
 
+// taken from
+// https://stackoverflow.com/questions/48593312/javascript-event-when-mouseover-and-mousedown
+function setMouseDownTrue() {
+  console.log('setMouseDownTrue');
+  mouseDown = true;
+}
+
+function setMouseDownFalse() {
+  console.log('setMouseDownFalse');
+  mouseDown = false;
+}
+
 function deleteGrid() {
-    const tiles = document.querySelectorAll('.grid-square');
-    for (let i = 0; i < tiles.length; ++i) {
-        tiles[i].parentNode.removeChild(tiles[i]);
+    const htmlTiles = document.querySelectorAll('.grid-square');
+    for (let i = 0; i < htmlTiles.length; ++i) {
+        htmlTiles[i].parentNode.removeChild(htmlTiles[i]);
     }
 }
 
 function onNewSketchButtonClick() {
     ROWS = COLS = getUserInputForDimensions();
     deleteGrid();
+	fillTilesArray();
     generateGrid();
 }
 
 function downloadJSON() {
-	downloadString(JSON.stringify(tiles), 'text/json', 'strategy-game-export.json')
+	downloadString(getOutputJsonString(),
+		'text/json',
+		'strategy-game-export.json');
 }
 
 // Tiles is an array of Tile objects
@@ -178,5 +199,22 @@ function downloadString(text, fileType, fileName) {
   a.click();
   document.body.removeChild(a);
   setTimeout(function() { URL.revokeObjectURL(a.href); }, 1500);
+}
+
+function getOutputJsonString() {
+	// JSON.stringify(tiles);
+	
+	let outerJson = new Object();
+	
+	outerJson['tilesArray'] = tiles;
+	
+	outerJson['ROWS'] = ROWS;
+	outerJson['COLS'] = COLS;
+	
+	// outerJson['startingCoordinate'] = new Coordinate(2, 1);
+	
+	console.log(JSON.stringify(outerJson));
+	
+	return JSON.stringify(outerJson);
 }
 	
