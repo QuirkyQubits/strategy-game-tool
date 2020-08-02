@@ -143,7 +143,11 @@ function setToggleTrue() { setToggle(true); }
 function setToggleFalse() { setToggle(false); }
 
 function setToggle(value) {
-  console.log(`setToggle(${value})`);
+  // console.log(`setToggle(${value})`);
+  
+  // perhaps also set a UI element that displays the toggle status here
+  // <code>
+  
   toggle = value;
 }
 
