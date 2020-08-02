@@ -6,12 +6,15 @@ const container = document.querySelector("#main-container");
 const newSketchButton = document.querySelector('#new-sketch-button');
 const sketchModeCheckbox = document.getElementById('sketch-mode-checkbox');
 const coloringStyleSelection = document.getElementById('coloring-style-selection');
+const downloadJSONButton = document.getElementById('download-json-button');
 
 $( document ).ready(function() {
 	setContainerDimensions(container);
 	newSketchButton.addEventListener('click', onNewSketchButtonClick);
+	downloadJSONButton.addEventListener('click', downloadJSON);
 	fillTilesArray();
 	generateGrid();
+	// setDownloadLinkHref();
 	
 	// tile = new Tile(tileTypes.GRASS);
 });
@@ -114,6 +117,10 @@ function onNewSketchButtonClick() {
     generateGrid();
 }
 
+function downloadJSON() {
+	downloadString(JSON.stringify(tiles), 'text/json', 'strategy-game-export.json')
+}
+
 // Tiles is an array of Tile objects
 function fillTilesArray() {
 	tiles = new Array(ROWS);
@@ -155,5 +162,21 @@ function printTilesArray() {
 			console.log(`Tile at (${r}, ${c}) is of tileType: ${tile.tileType}`);
         }
     }
+}
+
+// taken from https://gist.github.com/danallison/3ec9d5314788b337b682
+// usage: // downloadString(JSON.stringify(tiles), 'text/json', 'strategy-game-export.json');
+function downloadString(text, fileType, fileName) {
+  var blob = new Blob([text], { type: fileType });
+
+  var a = document.createElement('a');
+  a.download = fileName;
+  a.href = URL.createObjectURL(blob);
+  a.dataset.downloadurl = [fileType, a.download, a.href].join(':');
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1500);
 }
 	
