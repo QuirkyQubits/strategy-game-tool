@@ -1,5 +1,5 @@
 let ROWS = COLS = 7;
-let MAIN_CONTAINER_DIMENSIONS = 500; // width and height of main container box, in px
+let MAIN_CONTAINER_DIMENSIONS = 600; // width and height of main container box, in px
 
 let tiles = null; // array of Tile objects
 const container = document.querySelector("#main-container");
@@ -26,8 +26,8 @@ $( document ).ready(function() {
 	document.addEventListener('mouseup', setToggleFalse);
 	
 	// for shortcut toggling 
-	document.addEventListener('keydown', function(event) {
-		const key = event.key; // "a", "1", "Shift", etc.
+	document.addEventListener('keydown', function(e) {
+		const key = e.key; // "a", "1", "Shift", etc.
 		if (key === "1"){
 			setToggle(!toggle);
 			
@@ -44,7 +44,7 @@ $( document ).ready(function() {
 function generateGrid() {
 
     // set grid square's dimension based on MAIN_CONTAINER_DIMENSIONS
-    const tileDimensions = MAIN_CONTAINER_DIMENSIONS / ROWS;
+    const tileDimensions = Math.floor(MAIN_CONTAINER_DIMENSIONS / ROWS);
 
     for (let r = 0; r < ROWS; ++r) {
         for (let c = 0; c < COLS; ++c) {
@@ -62,6 +62,10 @@ function generateGrid() {
             tile.classList.add('grid-square');
 			
             tile.addEventListener('mouseover', onTileMouseOver);
+			
+			tile.addEventListener('mouseleave', function(e){
+				currentTileDiv = null;
+			});
     
 			tile.setAttribute('row', r);
 			tile.setAttribute('col', c);
