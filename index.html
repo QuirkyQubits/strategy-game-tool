@@ -7,7 +7,7 @@
     <body>
         <h1>Strategy Game Level Creator</h1>
         <div id="options-container">
-            <button id="new-sketch-button">New Sketch</button>
+            <button id="new-level-button">New Level</button>
 
             <label for="coloring-style-selection">Coloring style: </label>
             <select id="coloring-style-selection">
@@ -23,7 +23,20 @@
 			-->
 			
 			<button id="download-json-button">Download JSON</button>
+			
+
+			
         </div>
+		
+		<div align="center">
+			<input type="file" id="json-file-select-input" value="Import" />
+			<button id="import-json-button">Import JSON</button>
+			<br>
+			
+			<textarea id="json-import-result-text">
+			</textarea>
+		</div>
+		
         <div id="main-container"></div>
 		
 		<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

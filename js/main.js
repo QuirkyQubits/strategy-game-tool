@@ -1,19 +1,21 @@
 let ROWS = COLS = 7;
-let MAIN_CONTAINER_DIMENSIONS = 600; // width and height of main container box, in px
+const MAIN_CONTAINER_DIMENSIONS = 600; // width and height of main container box, in px
 
 let tiles = null; // array of Tile objects
 const container = document.querySelector("#main-container");
-const newSketchButton = document.querySelector('#new-sketch-button');
+const newLevelButton = document.querySelector('#new-level-button');
 const sketchModeCheckbox = document.getElementById('sketch-mode-checkbox');
 const coloringStyleSelection = document.getElementById('coloring-style-selection');
-const downloadJSONButton = document.getElementById('download-json-button');
+const downloadJsonButton = document.getElementById('download-json-button');
+const importJsonButton = document.getElementById('import-json-button');
 let toggle = false;
 let currentTileDiv = null;
 
 $( document ).ready(function() {
 	setContainerDimensions(container);
-	newSketchButton.addEventListener('click', onNewSketchButtonClick);
-	downloadJSONButton.addEventListener('click', downloadJSON);
+	newLevelButton.addEventListener('click', onNewLevelButtonClick);
+	downloadJsonButton.addEventListener('click', downloadJson);
+	importJsonButton.addEventListener('click', importJson);
 	
 	// for toggle
 	document.addEventListener('mousedown', function(event) {
@@ -37,10 +39,114 @@ $( document ).ready(function() {
 		}
 	});
 	
-	fillTilesArray();
+	initializeTilesArray();
 	generateGrid();
+	
+	
 });
 
+// imports the Json file the user uploaded to the file input area
+function importJson() {
+	let files = document.getElementById('json-file-select-input').files;
+	// console.log(files);
+	if (files.length <= 0) {
+		return false;
+	}
+
+	let fr = new FileReader();
+
+	fr.onload = function(e) { 
+		// console.log(e);
+		let json = JSON.parse(e.target.result);
+		loadFromJson(json);
+		let formatted = JSON.stringify(json, null, 2);
+		document.getElementById('json-import-result-text').value = formatted;
+	}
+
+	fr.readAsText(files.item(0));
+};
+
+function loadFromJson(json) {
+	// set the dimensions correctly, populate the divs/array correctly
+	
+	ROWS = json["ROWS"];
+	COLS = json["COLS"];
+	const tilesArray = json["tilesArray"];
+	initializeTilesArray();
+	
+	//console.log(ROWS);
+	//console.log(COLS);
+	console.log("Tiles var after loading:");
+	console.log(tiles);
+	
+    deleteGrid();
+	
+	// set grid square's dimension based on MAIN_CONTAINER_DIMENSIONS
+    const tileDimensions = Math.floor(MAIN_CONTAINER_DIMENSIONS / ROWS);
+	
+	console.log(`Tile dimensions (px): ${tileDimensions}`);
+	
+	for (let r = 0; r < ROWS; ++r) {
+		for (let c = 0; c < COLS; ++c) {
+			let tileDiv = document.createElement("div");
+
+            tileDiv.style.width
+                = tileDiv.style.height
+                = `${tileDimensions}px`;
+    
+            if (c === 0) {
+                tileDiv.classList.add('clear-left');
+            }
+    
+            tileDiv.classList.add('grid-square');
+			
+            tileDiv.addEventListener('mouseover', onTileMouseOver);
+			
+			tileDiv.addEventListener('mouseleave', function(e){
+				currentTileDiv = null;
+			});
+    
+			tileDiv.setAttribute('row', r);
+			tileDiv.setAttribute('col', c);
+	
+            container.appendChild(tileDiv);
+			
+			// then fill tiles with the tile
+			
+			let tileObj = tilesArray[r][c];
+			
+			//console.log(tileObj);
+			//console.log(tileObj["tileType"]);
+			
+			if (tileObj["tileType"] === tileTypes.GRASS) {
+				tiles[r][c] = new Tile(tileTypes.GRASS);
+				changeColor(tileDiv, tileTypes.GRASS);
+			}
+			else if (tileObj["tileType"] === tileTypes.WATER) {
+				tiles[r][c] = new Tile(tileTypes.WATER);
+				changeColor(tileDiv, tileTypes.WATER);
+			}
+			else if (tileObj["tileType"] === tileTypes.MARSH) {
+				tiles[r][c] = new Tile(tileTypes.MARSH);
+				changeColor(tileDiv, tileTypes.MARSH);
+			}
+			else if (tileObj["tileType"] === tileTypes.PLASMA) {
+				tiles[r][c] = new Tile(tileTypes.PLASMA);
+				changeColor(tileDiv, tileTypes.PLASMA);
+			}
+			else if (tileObj["tileType"] === tileTypes.EMPTY) {
+				// do nothing
+				tiles[r][c] = new Tile(tileTypes.EMPTY);
+				changeColor(tileDiv, tileTypes.EMPTY);
+			}
+			else {
+				console.log("loadFromJson():: unknown tileType");
+			}
+		}
+	}
+}
+
+// call this once, when the page first loads
 function generateGrid() {
 
     // set grid square's dimension based on MAIN_CONTAINER_DIMENSIONS
@@ -79,37 +185,73 @@ function generateGrid() {
     }
 }
 
-function changeColor(tileDiv) {
-	const row = tileDiv.getAttribute("row");
-	const col = tileDiv.getAttribute("col");
-	const tile = tiles[row][col];
+function changeColor(tileDiv, tileType) {
+	if (arguments.length === 1) {
+		
+		//console.log("changeColor 1 param called");
 	
-    if (coloringStyleSelection.value === "grass") {
-        tileDiv.style.backgroundColor = getGrassColor();
-        tileDiv.style.opacity = "";
+		const row = tileDiv.getAttribute("row");
+		const col = tileDiv.getAttribute("col");
+		const tile = tiles[row][col];
 		
-		tile.tileType = tileTypes.GRASS;
-    }
-    else if (coloringStyleSelection.value === "water") {
-        tileDiv.style.backgroundColor = getWaterColor();
-        tileDiv.style.opacity = "";
+		if (coloringStyleSelection.value === "grass") {
+			tileDiv.style.backgroundColor = getGrassColor();
+			tileDiv.style.opacity = "";
+			
+			tile.tileType = tileTypes.GRASS;
+		}
+		else if (coloringStyleSelection.value === "water") {
+			tileDiv.style.backgroundColor = getWaterColor();
+			tileDiv.style.opacity = "";
+			
+			tile.tileType = tileTypes.WATER;
+		}
+		else if (coloringStyleSelection.value === "marsh") {
+			tileDiv.style.backgroundColor = getMarshColor();
+			tileDiv.style.opacity = "";
+			
+			tile.tileType = tileTypes.MARSH;
+		}
+		else if (coloringStyleSelection.value === "plasma") {
+			tileDiv.style.backgroundColor = getPlasmaColor();
+			tileDiv.style.opacity = "";
+			
+			tile.tileType = tileTypes.PLASMA;
+		}
 		
-		tile.tileType = tileTypes.WATER;
-    }
-    else if (coloringStyleSelection.value === "marsh") {
-        tileDiv.style.backgroundColor = getMarshColor();
-		tileDiv.style.opacity = "";
+	}
+	else if (arguments.length === 2) {
 		
-		tile.tileType = tileTypes.MARSH;
-    }
-	else if (coloringStyleSelection.value === "plasma") {
-        tileDiv.style.backgroundColor = getPlasmaColor();
-		tileDiv.style.opacity = "";
+		//console.log("changeColor 2 param called");
 		
-		tile.tileType = tileTypes.PLASMA;
-    }
+		if (tileType === tileTypes.GRASS) {
+			tileDiv.style.backgroundColor = getGrassColor();
+			tileDiv.style.opacity = "";
+		}
+		else if (tileType === tileTypes.WATER) {
+			tileDiv.style.backgroundColor = getWaterColor();
+			tileDiv.style.opacity = "";
+		}
+		else if (tileType === tileTypes.MARSH) {
+			tileDiv.style.backgroundColor = getMarshColor();
+			tileDiv.style.opacity = "";
+		}
+		else if (tileType === tileTypes.PLASMA) {
+			tileDiv.style.backgroundColor = getPlasmaColor();
+			tileDiv.style.opacity = "";
+		}
+		else if (tileType === tileTypes.EMPTY) {
+			tileDiv.style.backgroundColor = getEmptyColor();
+			tileDiv.style.opacity = "";
+		}
+		else {
+			console.log("loadFromJson():: unknown tileType");
+		}
+	}
+	else {
+		console.log("changeColor():: unsupported arguments passed");
+	}
 }
-
 
 function onTileMouseOver(e) {
 	// console.log("r:" + e.target.getAttribute("row") + " || c:" + e.target.getAttribute("col"));
@@ -158,21 +300,21 @@ function deleteGrid() {
     }
 }
 
-function onNewSketchButtonClick() {
+function onNewLevelButtonClick() {
     ROWS = COLS = getUserInputForDimensions();
     deleteGrid();
-	fillTilesArray();
+	initializeTilesArray();
     generateGrid();
 }
 
-function downloadJSON() {
+function downloadJson() {
 	downloadString(getOutputJsonString(),
 		'text/json',
 		'strategy-game-export.json');
 }
 
 // Tiles is an array of Tile objects
-function fillTilesArray() {
+function initializeTilesArray() {
 	tiles = new Array(ROWS);
 	for (var r = 0; r < tiles.length; r++) {
 	  tiles[r] = new Array(COLS);
@@ -203,6 +345,10 @@ function getMarshColor() {
 
 function getPlasmaColor() {
 	return 'rgb(197, 211, 212)';
+}
+
+function getEmptyColor() {
+	return 'rgb(255, 255, 255)';
 }
 
 function printTilesArray() {

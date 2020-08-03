@@ -29,3 +29,9 @@ h1 {
 .clear-left {
     clear: left;
 }
+
+#json-import-result-text {
+	display:block;
+	width:400px;
+	height:200px;
+}
