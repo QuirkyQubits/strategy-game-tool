@@ -10,6 +10,6 @@ over grid squares to color the grid squares to be the color of that tile type.
 * You can import levels you have saved and view, modify, and export them.
 
 ## Notes:
-* For some reason, this tool only works in Google Chrome.
+* This tool works best in Google Chrome. (Not tested on other platforms)
 
 ![The tool](https://github.com/cerulea/strategy-game-tool/blob/master/images/tool.PNG)
