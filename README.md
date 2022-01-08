@@ -1,5 +1,3 @@
-https://cerulea.github.io/strategy-game-tool/
-
 # strategy-game-tool
 
 This is a tool used to quickly create levels for a strategy game, dungeon game, or other array-based RPG game.
@@ -11,5 +9,3 @@ over grid squares to color the grid squares to be the color of that tile type.
 
 ## Notes:
 * This tool works best in Google Chrome. (Not tested on other platforms)
-
-![The tool](https://github.com/cerulea/strategy-game-tool/blob/master/images/tool.PNG)
