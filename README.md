@@ -2,7 +2,13 @@
 
 A lightweight, browser-based tool for designing and editing tile-based maps for strategy games, dungeon crawlers, or any grid-based RPG.
 
-This tool is part of the larger [Strategy Game Movement System](https://quirkyqubits.github.io/strategy-game-movement/), and is intended to streamline the early phases of level design by making it easy to sketch, test, and share maps.
+This tool is part of the [Strategy Game Movement System](https://quirkyqubits.github.io/strategy-game-movement), and is intended to streamline the early phases of level design by making it easy to sketch, test, and share maps.
+
+---
+
+## 🚀 Try It Live
+
+[Level Creator](https://quirkyqubits.github.io/strategy-game-tool/)
 
 ---
 
@@ -33,12 +39,6 @@ Use this tool to:
 1. Sketch a level
 2. Export the JSON
 3. Run it through the simulation backend
-
----
-
-## 🚀 Try It Live
-
-👉 [Open the Level Creator](https://quirkyqubits.github.io/strategy-game-tool/)
 
 ---
 
