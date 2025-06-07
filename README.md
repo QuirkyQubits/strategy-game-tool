@@ -44,8 +44,8 @@ Use this tool to:
 
 ## 📌 Notes
 
-- This tool works best in **Google Chrome**  
-  (Other browsers are not fully tested)
+- This tool works best on desktop in Google Chrome or Firefox.
+⚠️ Mobile browsers are not supported.
 - All data is stored in-memory — remember to export if you want to save your work.
 
 ---
